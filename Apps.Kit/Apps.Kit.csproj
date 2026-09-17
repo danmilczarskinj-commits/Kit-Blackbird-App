@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Blackbird.Applications.Sdk.Common" Version="2.14.0" />
+    <PackageReference Include="Blackbird.Applications.Sdk.Utils" Version="1.0.26" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
 </Project>
