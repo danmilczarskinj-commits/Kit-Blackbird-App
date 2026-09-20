@@ -6,6 +6,7 @@ using Apps.Kit.Models.Dtos;
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Exceptions;
+using Blackbird.Applications.Sdk.Utils.Extensions.Http;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.Sdk.Utils.RestSharp;
 using RestSharp;
@@ -27,6 +28,30 @@ public class SubscriberActions(InvocationContext invocationContext) : KitInvocab
         if (response.Subscriber is null)
         {
             throw new PluginApplicationException("Kit returned an empty subscriber response.");
+        }
+
+        return response.Subscriber;
+    }
+
+    [Action("Create subscriber",
+        Description = "Create a new subscriber or update an existing subscriber with the same email address")]
+    public async Task<SubscriberDto> CreateSubscriber(
+    [ActionParameter] CreateSubscriberRequest input)
+    {
+        var endpoint = "subscribers";
+        var dto = new CreateSubscriberDto
+        {
+            EmailAddress = input.EmailAddress,
+            FirstName = input.FirstName,
+            State = input.State
+        };
+        var request = new KitRequest(endpoint, Method.Post, Creds).WithJsonBody(dto);
+
+        var response = await Client.ExecuteWithErrorHandling<GetSubscriberResponse>(request);
+
+        if (response.Subscriber is null)
+        {
+            throw new PluginApplicationException("Kit was unable to create or update the subscriber.");
         }
 
         return response.Subscriber;

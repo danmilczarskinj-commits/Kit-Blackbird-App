@@ -3,16 +3,19 @@ using Newtonsoft.Json;
 namespace Apps.Kit.Models.Dtos;
 
 public class SubscriberDto
-    {
-        [JsonProperty("id")]
-        public string Id { get; set; } = string.Empty;
+{
+    [JsonProperty("id")]
+    public string Id { get; set; } = string.Empty;
 
-        [JsonProperty("first_name")]
-        public string? FirstName { get; set; }
+    [JsonProperty("first_name")]
+    public string? FirstName { get; set; }
 
-        [JsonProperty("email_address")]
-        public string EmailAddress { get; set; } = string.Empty;
+    [JsonProperty("email_address")]
+    public string EmailAddress { get; set; } = string.Empty;
 
-        [JsonProperty("state")]
-        public string State { get; set; } = string.Empty;
-    }
+    [JsonProperty("state")]
+    public string State { get; set; } = string.Empty;
+
+    [JsonProperty("created_at")]
+    public DateTime? CreatedAt { get; set; }
+}

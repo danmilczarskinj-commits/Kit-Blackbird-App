@@ -49,4 +49,24 @@ public class SubscriberActionsTests : TestBase
         Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
         Console.WriteLine($"Total subscribers returned: {result.Subscribers.Count}");
     }
+
+    [TestMethod]
+    public async Task CreateSubscriber_ValidInput_ShouldCreateSubscriber()
+    {
+        var subscriberActions = new SubscriberActions(InvocationContext);
+
+        var request = new CreateSubscriberRequest
+        {
+            EmailAddress = "danmilczarskinj@gmail.com",
+            FirstName = "Blackbird Test Updated",
+            State = "inactive"
+        };
+
+        var result = await subscriberActions.CreateSubscriber(request);
+        Assert.IsNotNull(result);
+        Assert.AreEqual(request.EmailAddress, result.EmailAddress);
+        Assert.AreEqual(request.State, result.State);
+
+        Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+    }
 }
