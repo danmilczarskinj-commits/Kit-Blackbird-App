@@ -31,4 +31,69 @@ public class SubscriberActions(InvocationContext invocationContext) : KitInvocab
 
         return response.Subscriber;
     }
+
+    [Action("Search subscribers",
+            Description = "Search for subscribers")]
+    public async Task<SearchSubscribersResponse> SearchSubscribers([ActionParameter] SearchSubscribersRequest input)
+    {
+        var endpoint = "subscribers";
+        var request = new KitRequest(endpoint, Method.Get, Creds);
+
+        AddSearchParameters(request, input);
+
+        var response = await Client.ExecuteWithErrorHandling<SearchSubscribersResponse>(request);
+        var subscribers = response.Subscribers.ToList();
+
+        while (response.Pagination?.HasNextPage == true &&
+            response.Pagination?.EndCursor is not null)
+        {
+            var nextRequest = new KitRequest(endpoint, Method.Get, Creds);
+
+            AddSearchParameters(nextRequest, input);
+
+            nextRequest.AddQueryParameter(
+                "after",
+                response.Pagination.EndCursor);
+
+            var nextResponse = await Client.ExecuteWithErrorHandling<SearchSubscribersResponse>(nextRequest);
+            subscribers.AddRange(nextResponse.Subscribers);
+            response = nextResponse;
+        }
+
+        response.Subscribers = subscribers;
+        return response;
+    }
+
+    private void AddSearchParameters(KitRequest request, SearchSubscribersRequest input)
+    {
+        if (!string.IsNullOrEmpty(input.Status))
+        {
+            request.AddQueryParameter("status", input.Status);
+        }
+
+        if (!string.IsNullOrEmpty(input.EmailAddress))
+        {
+            request.AddQueryParameter("email_address", input.EmailAddress);
+        }
+
+        if (input.CreatedAfter.HasValue)
+        {
+            request.AddQueryParameter("created_after", input.CreatedAfter.Value.ToString("yyyy-MM-dd"));
+        }
+
+        if (input.CreatedBefore.HasValue)
+        {
+            request.AddQueryParameter("created_before", input.CreatedBefore.Value.ToString("yyyy-MM-dd"));
+        }
+
+        if (input.UpdatedAfter.HasValue)
+        {
+            request.AddQueryParameter("updated_after", input.UpdatedAfter.Value.ToString("yyyy-MM-dd"));
+        }
+
+        if (input.UpdatedBefore.HasValue)
+        {
+            request.AddQueryParameter("updated_before", input.UpdatedBefore.Value.ToString("yyyy-MM-dd"));
+        }
+    }
 }
