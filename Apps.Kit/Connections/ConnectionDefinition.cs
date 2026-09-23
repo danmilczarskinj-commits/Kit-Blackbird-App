@@ -21,7 +21,7 @@ public class ConnectionDefinition : IConnectionDefinition
                     Description = "The Kit V4 API key for authenticating requests to Kit."
                 }
             }
-        }       
+        }
     };
     public IEnumerable<AuthenticationCredentialsProvider> CreateAuthorizationCredentialsProviders(
          Dictionary<string, string> values)

@@ -12,8 +12,8 @@ public class KitClient() : BlackBirdRestClient(new()
 })
 {
     protected override Exception ConfigureErrorException(RestResponse response)
-{
-    return new PluginApplicationException(
-        response.Content ?? response.ErrorMessage ?? "Kit API request failed.");
-}
+    {
+        return new PluginApplicationException(
+            response.Content ?? response.ErrorMessage ?? "Kit API request failed.");
+    }
 }
