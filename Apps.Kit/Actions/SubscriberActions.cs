@@ -144,6 +144,16 @@ public class SubscriberActions(InvocationContext invocationContext) : KitInvocab
         return response.Subscriber;
     }
 
+    [Action("Unsubscribe subscriber",
+           Description = "Unsubscribe a subscriber using an ID")]
+    public async Task UnsubscribeSubscriber([ActionParameter] SubscriberRequest input)
+    {
+        var endpoint = $"subscribers/{input.SubscriberId}/unsubscribe";
+        var request = new KitRequest(endpoint, Method.Post, Creds);
+
+        await Client.ExecuteWithErrorHandling(request);
+    }
+
     [Action("Search subscribers",
             Description = "Search for subscribers")]
     public async Task<SearchSubscribersResponse> SearchSubscribers([ActionParameter] SearchSubscribersRequest input)

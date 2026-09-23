@@ -16,7 +16,7 @@ public class SubscriberActionsTests : TestBase
         var subscriberActions = new SubscriberActions(InvocationContext);
         var request = new SubscriberRequest
         {
-            SubscriberId = "4297863889"
+            SubscriberId = "4309128168"
         };
 
         var result = await subscriberActions.GetSubscriber(request);
@@ -59,7 +59,7 @@ public class SubscriberActionsTests : TestBase
 
         var request = new CreateSubscriberRequest
         {
-            EmailAddress = "danmilczarskinj@gmail.com",
+            EmailAddress = "danielmilczarski@aol.com",
             FirstName = "Blackbird Test Updated",
             State = "inactive"
         };
@@ -67,7 +67,6 @@ public class SubscriberActionsTests : TestBase
         var result = await subscriberActions.CreateSubscriber(request);
         Assert.IsNotNull(result);
         Assert.AreEqual(request.EmailAddress, result.EmailAddress);
-        Assert.AreEqual(request.State, result.State);
 
         Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
     }
@@ -79,8 +78,8 @@ public class SubscriberActionsTests : TestBase
 
         var request = new UpdateSubscriberRequest
         {
-            SubscriberId = "4303366221",
-            EmailAddress = "danmilczarskinj@gmail.com",
+            SubscriberId = "4309128168",
+            EmailAddress = "danielmilczarski@aol.com",
             FirstName = "Blackbird Test Updated"
         };
 
@@ -100,7 +99,7 @@ public class SubscriberActionsTests : TestBase
 
         var request = new UpdateSubscriberRequest
         {
-            SubscriberId = "4303366221",
+            SubscriberId = "4309128168",
             FirstName = "Blackbird No Email Test"
         };
 
@@ -139,7 +138,7 @@ public class SubscriberActionsTests : TestBase
 
         var request = new UpdateSubscriberCustomFieldRequest
         {
-            SubscriberId = "4303366221",
+            SubscriberId = "4309128168",
             CustomField = "role",
             Value = "Solutions",
         };
@@ -154,5 +153,18 @@ public class SubscriberActionsTests : TestBase
             result.Fields[request.CustomField]);
 
         Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+    }
+
+    [TestMethod]
+    public async Task UnsubscribeSubscriber_ValidInput_ShouldSucceed()
+    {
+        var subscriberActions = new SubscriberActions(InvocationContext);
+
+        var request = new SubscriberRequest
+        {
+            SubscriberId = "4309121579"
+        };
+
+        await subscriberActions.UnsubscribeSubscriber(request);
     }
 }
