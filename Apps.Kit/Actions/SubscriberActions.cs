@@ -36,7 +36,7 @@ public class SubscriberActions(InvocationContext invocationContext) : KitInvocab
     [Action("Create subscriber",
         Description = "Create a new subscriber or update an existing subscriber with the same email address")]
     public async Task<SubscriberDto> CreateSubscriber(
-    [ActionParameter] CreateSubscriberRequest input)
+        [ActionParameter] CreateSubscriberRequest input)
     {
         var endpoint = "subscribers";
         var dto = new CreateSubscriberDto
@@ -52,6 +52,93 @@ public class SubscriberActions(InvocationContext invocationContext) : KitInvocab
         if (response.Subscriber is null)
         {
             throw new PluginApplicationException("Kit was unable to create or update the subscriber.");
+        }
+
+        return response.Subscriber;
+    }
+
+    [Action("Update subscriber",
+        Description = "Update an existing subscriber")]
+    public async Task<SubscriberDto> UpdateSubscriber(
+        [ActionParameter] UpdateSubscriberRequest input)
+    {
+        var endpoint = $"subscribers/{input.SubscriberId}";
+        var emailAddress = input.EmailAddress;
+
+        if (string.IsNullOrEmpty(emailAddress))
+        {
+            var getRequest = new KitRequest(
+                $"subscribers/{input.SubscriberId}",
+                Method.Get,
+                Creds);
+
+            var getResponse =
+                await Client.ExecuteWithErrorHandling<GetSubscriberResponse>(getRequest);
+
+            if (getResponse.Subscriber is null)
+            {
+                throw new PluginApplicationException(
+                    "Kit returned an empty subscriber response.");
+            }
+
+            emailAddress = getResponse.Subscriber.EmailAddress;
+        }
+
+        var dto = new UpdateSubscriberDto
+        {
+            EmailAddress = emailAddress,
+            FirstName = input.FirstName
+        };
+        var request = new KitRequest(endpoint, Method.Put, Creds).WithJsonBody(dto);
+
+        var response = await Client.ExecuteWithErrorHandling<GetSubscriberResponse>(request);
+
+        if (response.Subscriber is null)
+        {
+            throw new PluginApplicationException("Kit was unable to update the subscriber.");
+        }
+
+        return response.Subscriber;
+    }
+
+    [Action("Update subscriber custom field",
+        Description = "Update a custom field on an existing subscriber")]
+    public async Task<SubscriberDto> UpdateSubscriberCustomField(
+        [ActionParameter] UpdateSubscriberCustomFieldRequest input)
+    {
+        var endpoint = $"subscribers/{input.SubscriberId}";
+
+        // Kit requires an email address when updating a subscriber.
+        var getRequest = new KitRequest(endpoint, Method.Get, Creds);
+
+        var getResponse =
+            await Client.ExecuteWithErrorHandling<GetSubscriberResponse>(getRequest);
+
+        if (getResponse.Subscriber is null)
+        {
+            throw new PluginApplicationException(
+                "Kit returned an empty subscriber response.");
+        }
+
+        var dto = new UpdateSubscriberDto
+        {
+            EmailAddress = getResponse.Subscriber.EmailAddress,
+            Fields = new Dictionary<string, string>
+            {
+                { input.CustomField, input.Value }
+            }
+        };
+
+        var request = new KitRequest(endpoint, Method.Put, Creds)
+            .WithJsonBody(dto);
+
+        var response =
+            await Client.ExecuteWithErrorHandling<GetSubscriberResponse>(request);
+
+        if (response.Subscriber is null)
+        {
+            throw new PluginApplicationException(
+                "Kit was unable to update the subscriber custom field.");
         }
 
         return response.Subscriber;

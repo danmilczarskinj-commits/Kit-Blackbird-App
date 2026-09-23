@@ -18,4 +18,7 @@ public class SubscriberDto
 
     [JsonProperty("created_at")]
     public DateTime? CreatedAt { get; set; }
+
+    [JsonProperty("fields")]
+    public Dictionary<string, string>? Fields { get; set; }
 }

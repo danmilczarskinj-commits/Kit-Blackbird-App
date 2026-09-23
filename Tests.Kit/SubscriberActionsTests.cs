@@ -2,6 +2,8 @@ using Apps.Kit.Actions;
 using Apps.Kit.Models.Requests;
 using Newtonsoft.Json;
 using Tests.Kit.Base;
+using Apps.Kit.DataSourceHandlers;
+using Blackbird.Applications.Sdk.Common.Dynamic;
 
 namespace Tests.Kit;
 
@@ -66,6 +68,90 @@ public class SubscriberActionsTests : TestBase
         Assert.IsNotNull(result);
         Assert.AreEqual(request.EmailAddress, result.EmailAddress);
         Assert.AreEqual(request.State, result.State);
+
+        Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+    }
+
+    [TestMethod]
+    public async Task UpdateSubscriber_ValidInput_ShouldUpdateSubscriber()
+    {
+        var subscriberActions = new SubscriberActions(InvocationContext);
+
+        var request = new UpdateSubscriberRequest
+        {
+            SubscriberId = "4303366221",
+            EmailAddress = "danmilczarskinj@gmail.com",
+            FirstName = "Blackbird Test Updated"
+        };
+
+        var result = await subscriberActions.UpdateSubscriber(request);
+        Assert.IsNotNull(result);
+        Assert.AreEqual(request.SubscriberId, result.Id);
+        Assert.AreEqual(request.EmailAddress, result.EmailAddress);
+        Assert.AreEqual(request.FirstName, result.FirstName);
+
+        Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+    }
+
+    [TestMethod]
+    public async Task UpdateSubscriber_WithoutEmail_ShouldUpdateSubscriber()
+    {
+        var subscriberActions = new SubscriberActions(InvocationContext);
+
+        var request = new UpdateSubscriberRequest
+        {
+            SubscriberId = "4303366221",
+            FirstName = "Blackbird No Email Test"
+        };
+
+        var result = await subscriberActions.UpdateSubscriber(request);
+        Assert.IsNotNull(result);
+        Assert.AreEqual(request.SubscriberId, result.Id);
+        Assert.AreEqual(request.FirstName, result.FirstName);
+        Assert.IsFalse(string.IsNullOrEmpty(result.EmailAddress));
+
+        Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+    }
+
+    [TestMethod]
+    public async Task CustomFieldDataHandler_ShouldReturnCustomFields()
+    {
+        var handler = new CustomFieldDataHandler(InvocationContext);
+
+        var result = await handler.GetDataAsync(
+            new DataSourceContext(),
+            CancellationToken.None);
+
+        var fields = result.ToList();
+
+        Assert.IsTrue(fields.Count > 0);
+
+        foreach (var field in fields)
+        {
+            Console.WriteLine($"{field.DisplayName} -> {field.Value}");
+        }
+    }
+
+    [TestMethod]
+    public async Task UpdateSubscriberCustomField_ValidInput_ShouldUpdateCustomField()
+    {
+        var subscriberActions = new SubscriberActions(InvocationContext);
+
+        var request = new UpdateSubscriberCustomFieldRequest
+        {
+            SubscriberId = "4303366221",
+            CustomField = "role",
+            Value = "Solutions",
+        };
+
+        var result = await subscriberActions.UpdateSubscriberCustomField(request);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(request.SubscriberId, result.Id);
+        Assert.IsNotNull(result.Fields);
+        Assert.AreEqual(
+            request.Value,
+            result.Fields[request.CustomField]);
 
         Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
     }
