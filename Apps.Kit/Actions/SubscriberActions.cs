@@ -154,6 +154,35 @@ public class SubscriberActions(InvocationContext invocationContext) : KitInvocab
         await Client.ExecuteWithErrorHandling(request);
     }
 
+    [Action("Tag subscriber",
+            Description = "Apply a tag to a subscriber")]
+    public async Task<SubscriberDto> TagSubscriber(
+            [ActionParameter] TagSubscriberRequest input)
+    {
+        var endpoint = $"tags/{input.TagId}/subscribers/{input.SubscriberId}";
+        var request = new KitRequest(endpoint, Method.Post, Creds);
+
+        var response = await Client.ExecuteWithErrorHandling<GetSubscriberResponse>(request);
+
+        if (response.Subscriber is null)
+        {
+            throw new PluginApplicationException("Kit was not able to add this tag to this subscriber.");
+        }
+
+        return response.Subscriber;
+    }
+
+    [Action("Remove tag from subscriber",
+            Description = "Remove a tag from a subscriber")]
+    public async Task RemoveTagFromSubscriber(
+            [ActionParameter] TagSubscriberRequest input)
+    {
+        var endpoint = $"tags/{input.TagId}/subscribers/{input.SubscriberId}";
+        var request = new KitRequest(endpoint, Method.Delete, Creds);
+
+        await Client.ExecuteWithErrorHandling(request);
+    }
+
     [Action("Search subscribers",
             Description = "Search for subscribers")]
     public async Task<SearchSubscribersResponse> SearchSubscribers([ActionParameter] SearchSubscribersRequest input)

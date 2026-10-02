@@ -167,4 +167,54 @@ public class SubscriberActionsTests : TestBase
 
         await subscriberActions.UnsubscribeSubscriber(request);
     }
+
+    [TestMethod]
+    public async Task TagDataHandler_ShouldReturnTags()
+    {
+        var handler = new TagDataHandler(InvocationContext);
+
+        var result = await handler.GetDataAsync(
+            new DataSourceContext(),
+            CancellationToken.None);
+
+        var tags = result.ToList();
+
+        Assert.IsTrue(tags.Count > 0);
+
+        foreach (var tag in tags)
+        {
+            Console.WriteLine($"{tag.DisplayName} -> {tag.Value}");
+        }
+    }
+
+    [TestMethod]
+    public async Task TagSubscriber_ValidInput_ShouldSucceed()
+    {
+        var subscriberActions = new SubscriberActions(InvocationContext);
+
+        var request = new TagSubscriberRequest
+        {
+            SubscriberId = "4309128168",
+            TagId = "23259003"
+        };
+
+        var result = await subscriberActions.TagSubscriber(request);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(request.SubscriberId, result.Id);
+    }
+
+    [TestMethod]
+    public async Task RemoveTagFromSubscriber_ValidInput_ShouldSucceed()
+    {
+        var subscriberActions = new SubscriberActions(InvocationContext);
+
+        var request = new TagSubscriberRequest
+        {
+            SubscriberId = "4309128168",
+            TagId = "23259003"
+        };
+
+        await subscriberActions.RemoveTagFromSubscriber(request);
+    }
 }
