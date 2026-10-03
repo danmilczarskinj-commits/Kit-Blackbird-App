@@ -154,6 +154,41 @@ public class SubscriberActions(InvocationContext invocationContext) : KitInvocab
         await Client.ExecuteWithErrorHandling(request);
     }
 
+    [Action("Get subscriber tags",
+        Description = "Get all tags for a subscriber")]
+    public async Task<List<SubscriberTagDto>> GetSubscriberTags(
+        [ActionParameter] SubscriberRequest input)
+    {
+        var endpoint = $"subscribers/{input.SubscriberId}/tags";
+        var request = new KitRequest(endpoint, Method.Get, Creds);
+        request.AddQueryParameter("per_page", 1000);
+
+        var tags = new List<SubscriberTagDto>();
+
+        var response =
+            await Client.ExecuteWithErrorHandling<GetSubscriberTagsResponse>(request);
+
+        tags.AddRange(response.Tags);
+
+        while (response.Pagination?.HasNextPage == true &&
+               response.Pagination.EndCursor is not null)
+        {
+            var nextRequest = new KitRequest(endpoint, Method.Get, Creds);
+
+            nextRequest.AddQueryParameter("per_page", 1000);
+            nextRequest.AddQueryParameter(
+                "after",
+                response.Pagination.EndCursor);
+
+            response =
+                await Client.ExecuteWithErrorHandling<GetSubscriberTagsResponse>(nextRequest);
+
+            tags.AddRange(response.Tags);
+        }
+
+        return tags;
+    }
+
     [Action("Tag subscriber",
             Description = "Apply a tag to a subscriber")]
     public async Task<SubscriberDto> TagSubscriber(

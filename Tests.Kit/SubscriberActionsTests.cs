@@ -230,6 +230,26 @@ public class SubscriberActionsTests : TestBase
     }
 
     [TestMethod]
+    public async Task GetSubscriberTags_ValidInput_ShouldReturnTags()
+    {
+        var subscriberActions = new SubscriberActions(InvocationContext);
+
+        var request = new SubscriberRequest
+        {
+            SubscriberId = "4102640914"
+        };
+
+        var result = await subscriberActions.GetSubscriberTags(request);
+
+        Assert.IsNotNull(result);
+
+        foreach (var tag in result)
+        {
+            Console.WriteLine($"{tag.Id}: {tag.Name} - Tagged at: {tag.TaggedAt}");
+        }
+    }
+
+    [TestMethod]
     public async Task RemoveTagFromSubscriber_ValidInput_ShouldSucceed()
     {
         var subscriberActions = new SubscriberActions(InvocationContext);
