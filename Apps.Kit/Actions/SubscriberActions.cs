@@ -183,6 +183,40 @@ public class SubscriberActions(InvocationContext invocationContext) : KitInvocab
         await Client.ExecuteWithErrorHandling(request);
     }
 
+    [Action("Get subscriber stats",
+            Description = "Get email engagement statistics for a subscriber")]
+    public async Task<SubscriberStatsDto> GetSubscriberStats(
+            [ActionParameter] GetSubscriberStatsRequest input)
+    {
+        var endpoint = $"subscribers/{input.SubscriberId}/stats";
+        var request = new KitRequest(endpoint, Method.Get, Creds);
+
+        if (input.SentAfter.HasValue)
+        {
+            request.AddQueryParameter(
+                "email_sent_after",
+                input.SentAfter.Value.ToString("yyyy-MM-dd"));
+        }
+
+        if (input.SentBefore.HasValue)
+        {
+            request.AddQueryParameter(
+                "email_sent_before",
+                input.SentBefore.Value.ToString("yyyy-MM-dd"));
+        }
+
+        var response =
+            await Client.ExecuteWithErrorHandling<GetSubscriberStatsResponse>(request);
+
+        if (response.Subscriber is null)
+        {
+            throw new PluginApplicationException(
+                "Kit returned an empty subscriber stats response.");
+        }
+
+        return response.Subscriber;
+    }
+
     [Action("Search subscribers",
             Description = "Search for subscribers")]
     public async Task<SearchSubscribersResponse> SearchSubscribers([ActionParameter] SearchSubscribersRequest input)

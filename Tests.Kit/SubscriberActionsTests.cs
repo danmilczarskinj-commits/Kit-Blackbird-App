@@ -205,6 +205,31 @@ public class SubscriberActionsTests : TestBase
     }
 
     [TestMethod]
+    public async Task GetSubscriberStats_ValidInput_ShouldReturnStats()
+    {
+        var subscriberActions = new SubscriberActions(InvocationContext);
+
+        var request = new GetSubscriberStatsRequest
+        {
+            SubscriberId = "4102640914",
+            SentAfter = new DateTime(2025, 1, 1),
+            SentBefore = new DateTime(2026, 10, 3)
+        };
+
+        var result = await subscriberActions.GetSubscriberStats(request);
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(request.SubscriberId, result.Id);
+        Assert.IsNotNull(result.Stats);
+
+        Console.WriteLine($"Sent: {result.Stats.Sent}");
+        Console.WriteLine($"Opened: {result.Stats.Opened}");
+        Console.WriteLine($"Clicked: {result.Stats.Clicked}");
+        Console.WriteLine($"Open rate: {result.Stats.OpenRate}");
+        Console.WriteLine($"Click rate: {result.Stats.ClickRate}");
+    }
+
+    [TestMethod]
     public async Task RemoveTagFromSubscriber_ValidInput_ShouldSucceed()
     {
         var subscriberActions = new SubscriberActions(InvocationContext);
