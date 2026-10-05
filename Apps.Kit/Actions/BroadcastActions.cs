@@ -31,4 +31,14 @@ public class BroadcastActions(InvocationContext invocationContext)
 
         return response.Broadcast;
     }
+
+    [Action("Delete a broadcast",
+            Description = "Delete a specified Kit broadcast")]
+    public async Task DeleteBroadcast([ActionParameter] BroadcastRequest input)
+    {
+        var endpoint = $"broadcasts/{input.BroadcastId}";
+        var request = new KitRequest(endpoint, Method.Delete, Creds);
+
+        await Client.ExecuteWithErrorHandling(request);
+    }
 }
