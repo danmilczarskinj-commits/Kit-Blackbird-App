@@ -25,4 +25,23 @@ public class BroadcastActionsTests : TestBase
         Console.WriteLine($"EmailTemplate: {result.EmailTemplate?.Name}");
         Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
     }
+
+    [TestMethod]
+    public async Task SearchBroadcasts_ShouldReturnBroadcasts()
+    {
+        var broadcastActions = new BroadcastActions(InvocationContext);
+
+        var request = new SearchBroadcastsRequest
+        {
+            Status = "completed"
+        };
+
+        var result = await broadcastActions.SearchBroadcasts(request);
+
+        Assert.IsNotNull(result);
+        Assert.IsTrue(result.Count > 0);
+
+        Console.WriteLine($"Broadcasts returned: {result.Count}");
+        Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+    }
 }
