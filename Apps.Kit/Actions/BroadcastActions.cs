@@ -6,13 +6,19 @@ using Apps.Kit.Models.Dtos;
 using Blackbird.Applications.Sdk.Common.Actions;
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Exceptions;
+using Blackbird.Applications.Sdk.Common.Files;
 using Blackbird.Applications.Sdk.Common.Invocation;
 using Blackbird.Applications.Sdk.Utils.RestSharp;
+using Blackbird.Applications.SDK.Extensions.FileManagement.Interfaces;
+using Blackbird.Applications.Sdk.Utils.Extensions.Files;
 using RestSharp;
+using System.Text;
 
 namespace Apps.Kit.Actions;
 
-public class BroadcastActions(InvocationContext invocationContext)
+public class BroadcastActions(
+    InvocationContext invocationContext,
+    IFileManagementClient fileManagementClient)
     : KitInvocable(invocationContext)
 {
     [Action("Get a broadcast",
@@ -27,6 +33,36 @@ public class BroadcastActions(InvocationContext invocationContext)
         if (response.Broadcast is null)
         {
             throw new PluginApplicationException("Kit returned an empty broadcast response.");
+        }
+
+        return response.Broadcast;
+    }
+
+    [Action("Create a broadcast",
+    Description = "Create a new draft broadcast in Kit")]
+    public async Task<BroadcastDto> CreateBroadcast(
+    [ActionParameter] CreateBroadcastRequest input)
+    {
+        var html = await ReadHtmlFile(input.Content);
+
+        var dto = new CreateBroadcastDto
+        {
+            Subject = input.Subject,
+            Content = html,
+            PreviewText = input.PreviewText,
+            Description = input.Description
+        };
+
+        var request = new KitRequest("broadcasts", Method.Post, Creds);
+        request.AddJsonBody(dto);
+
+        var response =
+            await Client.ExecuteWithErrorHandling<GetBroadcastResponse>(request);
+
+        if (response.Broadcast is null)
+        {
+            throw new PluginApplicationException(
+                "Kit returned an empty broadcast response.");
         }
 
         return response.Broadcast;
@@ -102,5 +138,13 @@ public class BroadcastActions(InvocationContext invocationContext)
                 "sent_before",
                 input.SentBefore.Value.ToString("yyyy-MM-dd"));
         }
+    }
+
+    private async Task<string> ReadHtmlFile(FileReference content)
+    {
+        var file = await fileManagementClient.DownloadAsync(content);
+        var bytes = await file.GetByteData();
+
+        return Encoding.UTF8.GetString(bytes);
     }
 }

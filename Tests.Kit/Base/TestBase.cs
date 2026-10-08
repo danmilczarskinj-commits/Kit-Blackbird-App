@@ -16,9 +16,13 @@ public class TestBase
         {
             AuthenticationCredentialsProviders = Creds,
         };
+
+        FileManager = new FileManager();
     }
 
     protected IEnumerable<AuthenticationCredentialsProvider> Creds { get; set; }
 
     public InvocationContext InvocationContext { get; set; }
+
+    protected FileManager FileManager { get; set; }
 }
