@@ -32,10 +32,7 @@ public class BroadcastActionsTests : TestBase
     {
         var broadcastActions = new BroadcastActions(InvocationContext, null!);
 
-        var request = new SearchBroadcastsRequest
-        {
-            Status = "completed"
-        };
+        var request = new SearchBroadcastsRequest();
 
         var result = await broadcastActions.SearchBroadcasts(request);
 
