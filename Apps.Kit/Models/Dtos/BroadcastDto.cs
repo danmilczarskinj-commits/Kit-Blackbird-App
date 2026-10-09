@@ -48,4 +48,7 @@ public class BroadcastDto
 
     [JsonProperty("status")]
     public string? Status { get; set; }
+
+    [JsonProperty("content")]
+    public string? Content { get; set; }
 }

@@ -78,6 +78,33 @@ public class BroadcastActions(
         await Client.ExecuteWithErrorHandling(request);
     }
 
+    [Action("Download broadcast HTML",
+    Description = "Download a Kit broadcast's content as an HTML file")]
+    public async Task<DownloadBroadcastResponse> DownloadBroadcast(
+    [ActionParameter] BroadcastRequest input)
+    {
+        var broadcast = await GetBroadcast(input);
+
+        if (broadcast.Content is null)
+        {
+            throw new PluginApplicationException(
+                "This broadcast has no HTML content.");
+        }
+
+        var bytes = Encoding.UTF8.GetBytes(broadcast.Content);
+        using var stream = new MemoryStream(bytes);
+
+        var file = await fileManagementClient.UploadAsync(
+            stream,
+            "text/html",
+            $"broadcast-{broadcast.Id}.html");
+
+        return new DownloadBroadcastResponse
+        {
+            Content = file
+        };
+    }
+
     [Action("Search broadcasts",
         Description = "Search available Kit broadcasts")]
     public async Task<List<BroadcastDto>> SearchBroadcasts(

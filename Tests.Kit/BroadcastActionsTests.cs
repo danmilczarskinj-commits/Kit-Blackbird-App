@@ -72,4 +72,27 @@ public class BroadcastActionsTests : TestBase
 
         Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
     }
+
+    [TestMethod]
+    public async Task DownloadBroadcast_ShouldReturnHtmlFile()
+    {
+        var broadcastActions = new BroadcastActions(InvocationContext, FileManager);
+
+        var request = new BroadcastRequest
+        {
+            BroadcastId = "26025023"
+        };
+
+        var result = await broadcastActions.DownloadBroadcast(request);
+
+        Assert.IsNotNull(result.Content);
+        Assert.AreEqual("text/html", result.Content.ContentType);
+
+        var html = FileManager.ReadOutputAsString(result.Content);
+
+        Assert.IsFalse(string.IsNullOrWhiteSpace(html));
+
+        Console.WriteLine($"Downloaded file: {result.Content.Name}");
+        Console.WriteLine(html);
+    }
 }

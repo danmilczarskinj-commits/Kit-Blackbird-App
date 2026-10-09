@@ -371,3 +371,10 @@ FodyWeavers.xsd
 appsettings.json
 /Tests.Customer.io/Output
 /Tests.Customer.io/appsettings.json
+
+appsettings.json
+/Tests.Customer.io/Output
+/Tests.Customer.io/appsettings.json
+
+# Kit integration test output files
+/Tests.Kit/TestFiles/Output/
