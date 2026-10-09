@@ -95,4 +95,32 @@ public class BroadcastActionsTests : TestBase
         Console.WriteLine($"Downloaded file: {result.Content.Name}");
         Console.WriteLine(html);
     }
+
+    [TestMethod]
+    [TestCategory("Manual")]
+    public async Task UpdateBroadcast_ShouldUpdateDraft()
+    {
+        var actions = new BroadcastActions(InvocationContext, FileManager);
+
+        var input = new UpdateBroadcastRequest
+        {
+            BroadcastId = "26301241",
+            Subject = "Updated broadcast test",
+            PreviewText = "Testing the Kit update action",
+            Description = "Updated through Blackbird",
+            Content = new FileReference
+            {
+                Name = "test-broadcast.html"
+            }
+        };
+
+        var result = await actions.UpdateBroadcast(input);
+
+        Assert.AreEqual(input.BroadcastId, result.Id);
+        Assert.AreEqual(input.Subject, result.Subject);
+        Assert.AreEqual(false, result.Public);
+
+        Console.WriteLine($"Updated broadcast: {result.Id}");
+        Console.WriteLine($"Status: {result.Status}");
+    }
 }

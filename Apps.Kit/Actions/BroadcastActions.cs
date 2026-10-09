@@ -68,6 +68,37 @@ public class BroadcastActions(
         return response.Broadcast;
     }
 
+    [Action("Update a broadcast",
+    Description = "Update an existing Kit broadcast as a draft")]
+    public async Task<BroadcastDto> UpdateBroadcast(
+    [ActionParameter] UpdateBroadcastRequest input)
+    {
+        var html = await ReadHtmlFile(input.Content);
+
+        var dto = new UpdateBroadcastDto
+        {
+            Subject = input.Subject,
+            Content = html,
+            PreviewText = input.PreviewText,
+            Description = input.Description
+        };
+
+        var endpoint = $"broadcasts/{input.BroadcastId}";
+        var request = new KitRequest(endpoint, Method.Put, Creds);
+        request.AddJsonBody(dto);
+
+        var response =
+            await Client.ExecuteWithErrorHandling<GetBroadcastResponse>(request);
+
+        if (response.Broadcast is null)
+        {
+            throw new PluginApplicationException(
+                "Kit returned an empty broadcast response.");
+        }
+
+        return response.Broadcast;
+    }
+
     [Action("Delete a broadcast",
             Description = "Delete a specified Kit broadcast")]
     public async Task DeleteBroadcast([ActionParameter] BroadcastRequest input)
