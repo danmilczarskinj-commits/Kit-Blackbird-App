@@ -21,4 +21,7 @@ public class SubscriberDto
 
     [JsonProperty("fields")]
     public Dictionary<string, string>? Fields { get; set; }
+
+    [JsonProperty("canceled_at")]
+    public DateTime? CanceledAt { get; set; }
 }

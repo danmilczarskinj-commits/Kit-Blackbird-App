@@ -378,3 +378,6 @@ appsettings.json
 
 # Kit integration test output files
 /Tests.Kit/TestFiles/Output/
+
+# Local deployment packages
+Kit-DevLab-*.zip
