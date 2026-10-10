@@ -388,3 +388,6 @@ Tests.Kit/TestFiles/Input/broadcast-update-de.html
 
 # Account-specific XLIFF integration test fixture
 Tests.Kit/TestFiles/Input/kit-broadcast-26340985.html.xlf
+
+# Blackbird custom app deployment packages
+/Kit-*.zip

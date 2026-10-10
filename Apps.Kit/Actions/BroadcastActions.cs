@@ -17,6 +17,7 @@ using System.Text;
 
 namespace Apps.Kit.Actions;
 
+[ActionList("Broadcasts")]
 public class BroadcastActions(
     InvocationContext invocationContext,
     IFileManagementClient fileManagementClient)
