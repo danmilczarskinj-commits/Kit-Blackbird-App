@@ -8,7 +8,6 @@ using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Exceptions;
 using Blackbird.Applications.Sdk.Utils.Extensions.Http;
 using Blackbird.Applications.Sdk.Common.Invocation;
-using Blackbird.Applications.Sdk.Utils.RestSharp;
 using RestSharp;
 
 namespace Apps.Kit.Actions;

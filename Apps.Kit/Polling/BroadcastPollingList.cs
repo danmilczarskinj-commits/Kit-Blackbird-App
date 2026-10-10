@@ -8,7 +8,6 @@ using Apps.Kit.Api;
 using Apps.Kit.Models.Responses;
 using RestSharp;
 using Blackbird.Applications.Sdk.Common;
-using Blackbird.Applications.SDK.Blueprints;
 
 namespace Apps.Kit.Polling;
 
@@ -16,7 +15,6 @@ namespace Apps.Kit.Polling;
 public class BroadcastPollingList(InvocationContext invocationContext)
     : KitInvocable(invocationContext)
 {
-    [BlueprintEventDefinition(BlueprintEvent.ContentCreatedOrUpdated)]
     [PollingEvent(
         "On broadcast published",
         Description = "Triggers when a Kit broadcast is published to the web")]
