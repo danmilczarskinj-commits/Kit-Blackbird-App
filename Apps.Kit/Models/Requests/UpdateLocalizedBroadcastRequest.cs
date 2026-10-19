@@ -1,12 +1,14 @@
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Files;
+using Apps.Kit.DataSourceHandlers;
+using Blackbird.Applications.Sdk.Common.Dynamic;
 
 namespace Apps.Kit.Models.Requests;
 
 public class UpdateLocalizedBroadcastRequest
 {
     [Display("Localized broadcast ID",
-        Description = "ID of the existing localized Kit broadcast to update.")]
+        Description = "ID of the existing localized Kit broadcast to update."), DataSource(typeof(BroadcastDataHandler))]
     public string BroadcastId { get; set; } = string.Empty;
 
     [Display("Translated content",

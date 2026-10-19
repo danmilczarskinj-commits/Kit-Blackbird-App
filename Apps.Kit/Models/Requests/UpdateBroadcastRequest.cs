@@ -1,11 +1,13 @@
 using Blackbird.Applications.Sdk.Common;
 using Blackbird.Applications.Sdk.Common.Files;
+using Apps.Kit.DataSourceHandlers;
+using Blackbird.Applications.Sdk.Common.Dynamic;
 
 namespace Apps.Kit.Models.Requests;
 
 public class UpdateBroadcastRequest
 {
-    [Display("Broadcast ID")]
+    [Display("Broadcast ID"), DataSource(typeof(BroadcastDataHandler))]
     public string BroadcastId { get; set; } = string.Empty;
 
     [Display("Subject")]
